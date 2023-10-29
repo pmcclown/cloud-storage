@@ -3,6 +3,8 @@ package ru.netology.cloudstorage.service;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import ru.netology.cloudstorage.dao.entity.Session;
@@ -10,6 +12,7 @@ import ru.netology.cloudstorage.dao.entity.User;
 import ru.netology.cloudstorage.dao.repository.SessionRepository;
 import ru.netology.cloudstorage.dao.repository.UserRepository;
 import ru.netology.cloudstorage.dto.JwtRequest;
+import ru.netology.cloudstorage.utils.SecurityUtils;
 
 import java.util.List;
 
@@ -35,16 +38,19 @@ class AuthServiceTest {
     private final String PASSWORD = "Test";
     private final String TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbGV4Iiwicm9sZXMiOltdLCJpYXQiOjE2OT" +
             "c0NzkwMTh9.DiAVzgQYVTVIQiSJy9mXIfxE8267iQT6CyQv-obyqwM";
+    private final MockedStatic<SecurityUtils> securityUtils = Mockito.mockStatic(SecurityUtils.class);
     private User user;
 
     @BeforeEach
     public void beforeEach() {
         user = userService.createNewUser(new User(LOGIN, PASSWORD));
+        securityUtils.when(SecurityUtils::getCurrentUser).thenReturn(LOGIN);
     }
     @AfterEach
     public void afterEach() {
         sessionRepository.deleteByUserId(user.getId());
         userRepository.delete(user);
+        securityUtils.close();
     }
 
     @Test

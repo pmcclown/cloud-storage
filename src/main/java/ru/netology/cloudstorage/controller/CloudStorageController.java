@@ -25,7 +25,7 @@ public class CloudStorageController {
 
     @PostMapping(value = "/file", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> upload(@ModelAttribute FileDTO file, @RequestParam("filename") String filename) throws IOException {
-        cloudStorageService.save(filename, file);
+        cloudStorageService.save(filename, file.getFile());
         return ResponseEntity.ok().build();
     }
 
@@ -42,7 +42,7 @@ public class CloudStorageController {
 
     @PutMapping("/file")
     public ResponseEntity<?> edit(@RequestParam("filename") String fileName, @RequestBody FileInfoDTO fileInfoDTO) {
-        cloudStorageService.updateFile(fileName, fileInfoDTO);
+        cloudStorageService.updateFile(fileName, fileInfoDTO.getFilename());
         return ResponseEntity.ok().build();
     }
 

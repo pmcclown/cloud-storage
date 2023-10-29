@@ -63,7 +63,7 @@ class CloudStorageServiceTest {
         FileDTO fileDTO = new FileDTO();
         fileDTO.setFile(new MockMultipartFile("Test.txt", "Test.txt", "byte[]", file));
 
-        cloudStorageService.save("Test.txt",fileDTO);
+        cloudStorageService.save("Test.txt",fileDTO.getFile());
 
         File file = cloudStorageRepository.findFileByFileNameAndUser_Login("Test.txt", LOGIN)
                 .orElse(new File());
@@ -93,7 +93,7 @@ class CloudStorageServiceTest {
     @Test
     void updateFile() {
         FileInfoDTO fileInfoDTO = new FileInfoDTO("newTest.txt", 3);
-        cloudStorageService.updateFile(filename, fileInfoDTO);
+        cloudStorageService.updateFile(filename, fileInfoDTO.getFilename());
 
         File file = cloudStorageRepository.findFileByFileNameAndUser_Login("newTest.txt", LOGIN)
                 .orElse(new File());

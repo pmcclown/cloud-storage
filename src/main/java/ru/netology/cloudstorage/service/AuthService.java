@@ -1,6 +1,7 @@
 package ru.netology.cloudstorage.service;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.java.Log;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,11 +10,13 @@ import ru.netology.cloudstorage.dao.entity.Session;
 import ru.netology.cloudstorage.dao.repository.SessionRepository;
 import ru.netology.cloudstorage.dto.JwtRequest;
 import ru.netology.cloudstorage.utils.JwtUtils;
+import ru.netology.cloudstorage.utils.SecurityUtils;
 
 import java.util.NoSuchElementException;
 
 @Service
 @AllArgsConstructor
+@Log
 public class AuthService {
     private final UserService userService;
     private final JwtUtils jwtUtils;
@@ -29,10 +32,12 @@ public class AuthService {
                 .orElseThrow(() -> new NoSuchElementException("User not found.")));
         session.setAuthToken(token);
         sessionRepository.save(session);
+        log.info("User [" +userDetails.getUsername()+"] has been authenticated with a auth-token - " + token);
         return token;
     }
 
     public void logout(String authToken) {
         sessionRepository.deleteByAuthToken(authToken.replace("Bearer ", ""));
+        log.info("User [" + SecurityUtils.getCurrentUser() + "] has logged out");
     }
 }
